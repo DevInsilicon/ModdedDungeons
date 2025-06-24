@@ -1,5 +1,6 @@
 package dev.insilicon.moddedDungeons.Dungeons;
 
+import dev.insilicon.moddedDungeons.Dungeons.Levels.Level1.Level1Manager;
 import dev.insilicon.moddedDungeons.ModdedDungeons;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -14,7 +15,9 @@ public class DungeonManager implements Listener
 
 
     public DungeonManager() {
+        detectRoomPositions();
 
+        Level1Manager level1Manager = new Level1Manager();
     }
 
     public void detectRoomPositions() {

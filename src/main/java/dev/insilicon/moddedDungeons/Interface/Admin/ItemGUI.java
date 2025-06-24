@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -41,10 +42,7 @@ public class ItemGUI implements Listener, CommandExecutor {
     }
 
     private void openItemGUI(Player player) {
-        int itemCount = ItemManager.ItemTypes.size();
-        int invSize = ((itemCount / 9) + (itemCount % 9 > 0 ? 1 : 0)) * 9;
-        invSize = Math.max(9, Math.min(54, invSize)); // Min size 9, max size 54
-
+        int invSize = 54; // Always use double chest size (6 rows of 9 slots)
         Inventory inventory = Bukkit.createInventory(null, invSize, Component.text(INVENTORY_TITLE));
 
         int slot = 0;
@@ -52,8 +50,10 @@ public class ItemGUI implements Listener, CommandExecutor {
             if (slot >= inventory.getSize()) break;
 
             ItemStack displayItem = item.getDefaultStack(1);
-            inventory.setItem(slot, displayItem);
-            slot++;
+            if (displayItem != null) {
+                inventory.setItem(slot, displayItem);
+                slot++;
+            }
         }
 
         player.openInventory(inventory);
@@ -64,21 +64,32 @@ public class ItemGUI implements Listener, CommandExecutor {
     public void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) return;
 
-        if (!openInventories.containsKey(player)) return;
+        Inventory clickedInventory = event.getClickedInventory();
+        if (clickedInventory == null) return;
 
         if (event.getView().title().equals(Component.text(INVENTORY_TITLE))) {
-            event.setCancelled(true); // Prevent taking items
+            event.setCancelled(true);
 
             ItemStack clickedItem = event.getCurrentItem();
             if (clickedItem == null) return;
 
             BaseItem baseItem = ItemManager.getItemType(clickedItem);
             if (baseItem != null) {
-                // Give the player the item
-                ItemManager.giveItem(player, baseItem, 1);
-                player.sendMessage(Component.text("You received: ", NamedTextColor.GREEN)
-                        .append(clickedItem.displayName()));
+                boolean success = ItemManager.giveItem(player, baseItem, 1);
+                if (success) {
+                    player.sendMessage(Component.text("You received: ", NamedTextColor.GREEN)
+                            .append(clickedItem.displayName()));
+                } else {
+                    player.sendMessage(Component.text("Failed to give item. Inventory might be full.", NamedTextColor.RED));
+                }
             }
+        }
+    }
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent event) {
+        if (event.getPlayer() instanceof Player player) {
+            openInventories.remove(player);
         }
     }
 }

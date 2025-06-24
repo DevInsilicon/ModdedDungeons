@@ -3,9 +3,9 @@ package dev.insilicon.moddedDungeons;
 import dev.insilicon.moddedDungeons.Dungeons.DungeonManager;
 import dev.insilicon.moddedDungeons.Interface.Admin.ItemGUI;
 import dev.insilicon.moddedDungeons.ItemManagement.ItemManager;
+import dev.insilicon.moddedDungeons.Playerdata.PlayerDataManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,6 +16,7 @@ public final class ModdedDungeons extends JavaPlugin {
     public static ModdedDungeons instance;
     public static ItemManager itemManager;
     public static DungeonManager dungeonManager;
+    public static PlayerDataManager playerDataManager;
     private ItemGUI itemGUI;
 
     @Override
@@ -38,6 +39,10 @@ public final class ModdedDungeons extends JavaPlugin {
 
             dungeonManager = new DungeonManager();
             getServer().getPluginManager().registerEvents(dungeonManager, this);
+
+            playerDataManager = new PlayerDataManager();
+            getServer().getPluginManager().registerEvents(playerDataManager, this);
+            getLogger().info("PlayerDataManager initialized successfully.");
 
             itemGUI = new ItemGUI();
             getServer().getPluginManager().registerEvents(itemGUI, this);
@@ -82,5 +87,9 @@ public final class ModdedDungeons extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (playerDataManager != null) {
+            playerDataManager.shutdown();
+            getLogger().info("PlayerDataManager shut down successfully.");
+        }
     }
 }
