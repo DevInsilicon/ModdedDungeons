@@ -65,6 +65,22 @@ public class BaseItem implements Listener {
 
     }
 
+    /**
+     * Called when an entity (not player) uses this item
+     * This provides more control for custom entities using weapons or items
+     */
+    public void entityInteraction(org.bukkit.entity.LivingEntity entity, Block block, ItemStack item) {
+        // Default implementation - can be overridden
+    }
+
+    /**
+     * Called when an entity attacks another entity while holding this item
+     * This allows custom entity weapon behaviors
+     */
+    public double entityAttackedWhileHeld(org.bukkit.entity.LivingEntity attacker, Entity victim, EntityDamageByEntityEvent event) {
+        return event.getFinalDamage(); // Default behavior, can be overridden
+    }
+
 
 
     public String getName() {

@@ -1,6 +1,7 @@
 package dev.insilicon.moddedDungeons;
 
 import dev.insilicon.moddedDungeons.Dungeons.DungeonManager;
+import dev.insilicon.moddedDungeons.EntityManagement.EntityManager;
 import dev.insilicon.moddedDungeons.Interface.Admin.ItemGUI;
 import dev.insilicon.moddedDungeons.ItemManagement.ItemManager;
 import dev.insilicon.moddedDungeons.Playerdata.PlayerDataManager;
@@ -15,6 +16,7 @@ public final class ModdedDungeons extends JavaPlugin {
 
     public static ModdedDungeons instance;
     public static ItemManager itemManager;
+    public static EntityManager entityManager;
     public static DungeonManager dungeonManager;
     public static PlayerDataManager playerDataManager;
     private ItemGUI itemGUI;
@@ -36,6 +38,10 @@ public final class ModdedDungeons extends JavaPlugin {
             itemManager = new ItemManager();
             getServer().getPluginManager().registerEvents(itemManager, this);
             getLogger().info("ItemManager initialized successfully.");
+
+            entityManager = new EntityManager();
+            getServer().getPluginManager().registerEvents(entityManager, this);
+            getLogger().info("EntityManager initialized successfully.");
 
             dungeonManager = new DungeonManager();
             getServer().getPluginManager().registerEvents(dungeonManager, this);
