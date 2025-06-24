@@ -26,7 +26,46 @@ import java.util.logging.Level;
 /**
  * Manages custom entities in the modded dungeons system.
  * Handles entity events, armor interactions, and item usage for custom entities.
- * Modeled after the ItemManager architecture.
+ * Modeled after the ItemManager architecture for consistency.
+ * 
+ * <p>The EntityManager serves as the central hub for all custom entity functionality,
+ * providing event handling, registration, and interaction management. It follows
+ * the same architectural patterns as ItemManager to ensure consistency and
+ * maintainability across the plugin.</p>
+ * 
+ * <p>Key responsibilities:</p>
+ * <ul>
+ *   <li>Registry and management of custom entity types</li>
+ *   <li>Event handling for entity spawn, death, damage, and attack events</li>
+ *   <li>Integration with the item management system for entity weapons and armor</li>
+ *   <li>Persistent data management for entity identification</li>
+ *   <li>Entity spawning and configuration</li>
+ * </ul>
+ * 
+ * <p>Event Processing Order:</p>
+ * <ol>
+ *   <li>Entity damage/attack events are captured</li>
+ *   <li>Entity-specific behaviors are applied</li>
+ *   <li>Armor interactions are processed</li>
+ *   <li>Weapon interactions are handled</li>
+ *   <li>Final damage/effects are applied</li>
+ * </ol>
+ * 
+ * <p>Usage:</p>
+ * <pre>{@code
+ * // Register EntityManager in your plugin
+ * entityManager = new EntityManager();
+ * getServer().getPluginManager().registerEvents(entityManager, this);
+ * 
+ * // Spawn a custom entity
+ * BaseEntity warriorType = EntityManager.getEntityType("basic_warrior");
+ * LivingEntity warrior = EntityManager.spawnEntity(warriorType, location);
+ * }</pre>
+ * 
+ * @see BaseEntity
+ * @see BaseEntityArmor
+ * @see ItemManager
+ * @since 1.0
  */
 public class EntityManager implements Listener {
     
