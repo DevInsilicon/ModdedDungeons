@@ -27,7 +27,6 @@ public class ItemManager implements Listener {
 
     public ItemManager() {
         registry();
-
     }
 
     public void registry() {

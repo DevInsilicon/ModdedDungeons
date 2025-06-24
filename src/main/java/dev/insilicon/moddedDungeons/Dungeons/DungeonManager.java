@@ -15,9 +15,12 @@ public class DungeonManager implements Listener
 
 
     public DungeonManager() {
+        Level1Manager level1Manager = new Level1Manager();
+
+
         detectRoomPositions();
 
-        Level1Manager level1Manager = new Level1Manager();
+
     }
 
     public void detectRoomPositions() {
