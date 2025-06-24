@@ -69,10 +69,34 @@ public class ItemManager implements Listener {
 
 
     // TODO: playerAttackedWhileHeld : BaseItem
-    public void playerAttackedWhileHeld(EntityDamageByEntityEvent event) {}
+    public void playerAttackedWhileHeld(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player player)) return;
+        
+        ItemStack heldItem = player.getInventory().getItemInMainHand();
+        if (heldItem == null) return;
+        
+        BaseItem itemType = getItemType(heldItem);
+        if (itemType == null) return;
+        
+        double originalDamage = event.getDamage();
+        double modifiedDamage = itemType.playerAttackedWhileHeld(player, event.getEntity(), event);
+        event.setDamage(modifiedDamage);
+    }
 
     // TODO: playerDamagedWhileHeld : BaseItem
-    public void playerDamagedWhileHeld(EntityDamageByEntityEvent event) {}
+    public void playerDamagedWhileHeld(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+        
+        ItemStack heldItem = player.getInventory().getItemInMainHand();
+        if (heldItem == null) return;
+        
+        BaseItem itemType = getItemType(heldItem);
+        if (itemType == null) return;
+        
+        double originalDamage = event.getDamage();
+        double modifiedDamage = itemType.playerDamagedWhileHeld(player, event);
+        event.setDamage(modifiedDamage);
+    }
 
     // TODO: pickup : BaseItem
     @EventHandler
