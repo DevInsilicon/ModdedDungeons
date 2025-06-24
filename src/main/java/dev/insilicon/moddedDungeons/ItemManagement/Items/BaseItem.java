@@ -61,7 +61,7 @@ public class BaseItem implements Listener {
 
     }
 
-    public void drop(Player player, ItemStack item) {
+    public void drop(Player player, ItemStack item, boolean isBecauseDeath) {
 
     }
 

@@ -1,19 +1,27 @@
 package dev.insilicon.moddedDungeons.ItemManagement.Items;
 
+import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class BaseArmor {
+import java.util.List;
+
+public class BaseArmor extends BaseItem {
 
     public ArmorType armorType;
 
     public double DamageAbsorbtion = 0.0; // Is a percent
     public double maxHPAbsorbtion = 0.0; // Max HP that can be absorbed
-    public double DamageReduction = 0.0; // Is not a percent and is a flat valueß
+    public double DamageReduction = 0.0; // Is not a percent and is a flat value
 
-    public BaseArmor(ArmorType armorType, double damageAbsorbtion, double maxHPAbsorbtion, double damageReduction) {
+    public BaseArmor(String name, Component displayName, List<String> lore, Material baseMaterial, NamespacedKey key,
+                     double levelRequirement, boolean canBeUsedOutsideDungeon, ArmorType armorType,
+                     double damageAbsorbtion, double maxHPAbsorbtion, double damageReduction) {
+        super(name, displayName, lore, baseMaterial, key, levelRequirement, canBeUsedOutsideDungeon);
         this.armorType = armorType;
         this.DamageAbsorbtion = damageAbsorbtion;
         this.maxHPAbsorbtion = maxHPAbsorbtion;
@@ -33,12 +41,17 @@ public class BaseArmor {
         return finalDamage;
     }
 
+    @Override
+    public double playerDamagedWhileHeld(Player player, EntityDamageByEntityEvent event) {
+        // Override the base method to include armor-specific logic
+        return event.getFinalDamage();
+    }
+
     public void userAttacked(Player player, Entity victim, EntityDamageByEntityEvent event) {
-        return;
+        // Default implementation
     }
 
     public boolean userEquipped(Player player, ItemStack item) {
         return true;
     }
 }
-
