@@ -62,7 +62,6 @@ public class BaseEntity implements Listener {
     public org.bukkit.entity.EntityType baseEntityType;
     private NamespacedKey namespaceKey;
     public double levelRequirement = 0;
-    public boolean canSpawnOutsideDungeon = true;
     public double maxHealth = 20.0;
     public double damage = 1.0;
 
@@ -75,21 +74,18 @@ public class BaseEntity implements Listener {
      * @param baseEntityType The base Bukkit entity type to use
      * @param key The NamespacedKey for persistent data storage
      * @param levelRequirement Minimum level required to spawn this entity
-     * @param canSpawnOutsideDungeon Whether this entity can spawn outside dungeons
      * @param maxHealth Maximum health points for this entity
      * @param damage Base damage dealt by this entity
      */
     public BaseEntity(String name, Component displayName, List<String> lore, 
                      org.bukkit.entity.EntityType baseEntityType, NamespacedKey key, 
-                     double levelRequirement, boolean canSpawnOutsideDungeon,
-                     double maxHealth, double damage) {
+                     double levelRequirement, double maxHealth, double damage) {
         this.name = name;
         this.displayName = displayName;
         this.lore = lore;
         this.baseEntityType = baseEntityType;
         this.namespaceKey = key;
         this.levelRequirement = levelRequirement;
-        this.canSpawnOutsideDungeon = canSpawnOutsideDungeon;
         this.maxHealth = maxHealth;
         this.damage = damage;
     }
@@ -216,10 +212,6 @@ public class BaseEntity implements Listener {
 
     public double getLevelRequirement() {
         return levelRequirement;
-    }
-
-    public boolean isCanSpawnOutsideDungeon() {
-        return canSpawnOutsideDungeon;
     }
 
     public double getMaxHealth() {

@@ -26,11 +26,9 @@ public class BaseEntityArmor extends BaseEntity {
      */
     public BaseEntityArmor(String name, Component displayName, List<String> lore,
                           org.bukkit.entity.EntityType baseEntityType, NamespacedKey key,
-                          double levelRequirement, boolean canSpawnOutsideDungeon,
-                          double maxHealth, double damage, ArmorType preferredArmorType,
+                          double levelRequirement, double maxHealth, double damage, ArmorType preferredArmorType,
                           double damageAbsorption, double maxHPAbsorption, double damageReduction) {
-        super(name, displayName, lore, baseEntityType, key, levelRequirement, 
-              canSpawnOutsideDungeon, maxHealth, damage);
+        super(name, displayName, lore, baseEntityType, key, levelRequirement, maxHealth, damage);
         this.preferredArmorType = preferredArmorType;
         this.damageAbsorption = damageAbsorption;
         this.maxHPAbsorption = maxHPAbsorption;

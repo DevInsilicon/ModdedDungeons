@@ -30,7 +30,7 @@ import java.util.function.Predicate;
 public class BasicWand extends BaseItem {
 
     private static final double MAX_DISTANCE = 20.0;
-    private static final double FOV_ANGLE = 30.0; // in degrees
+    private static final double FOV_ANGLE = 30.0;
     private static final double DAMAGE_AMOUNT = 5.0;
     private static final int PARTICLE_COUNT = 3;
     private static final double PARTICLE_SPEED = 0.05;
@@ -53,7 +53,6 @@ public class BasicWand extends BaseItem {
     public ItemStack getDefaultStack(double amount) {
         ItemStack fireWand = new ItemStack(this.baseMaterial, (int) amount);
 
-
         var meta = fireWand.getItemMeta();
         meta.displayName(this.displayName);
         List<Component> loreComponents = new ArrayList<>();
@@ -66,7 +65,6 @@ public class BasicWand extends BaseItem {
         meta.getPersistentDataContainer().set(this.getNamespaceKey(), PersistentDataType.STRING, this.name);
         fireWand.setItemMeta(meta);
 
-
         return fireWand;
     }
 
@@ -76,13 +74,10 @@ public class BasicWand extends BaseItem {
         Location startLocation = player.getEyeLocation();
         Vector direction = player.getLocation().getDirection();
 
-        // Create a predicate to filter out the caster
         Predicate<Entity> filter = entity -> entity != player;
 
-        // Play sound effect at cast location
         world.playSound(startLocation, Sound.ENTITY_BLAZE_SHOOT, 1.0f, 1.0f);
 
-        // Create particle effect animation
         new BukkitRunnable() {
             double distance = 0.5;
             Location particleLocation = startLocation.clone();
@@ -95,10 +90,8 @@ public class BasicWand extends BaseItem {
                     return;
                 }
 
-                // Move the particle location forward
                 particleLocation = startLocation.clone().add(direction.clone().multiply(distance));
 
-                // Check for blocks in the way
                 Block block = particleLocation.getBlock();
                 if (block.getType().isSolid()) {
                     world.spawnParticle(Particle.LAVA, particleLocation, 10, 0.2, 0.2, 0.2, 0.1);
@@ -108,18 +101,15 @@ public class BasicWand extends BaseItem {
                     return;
                 }
 
-                // Create fire particles
                 world.spawnParticle(Particle.FLAME, particleLocation, PARTICLE_COUNT, 0.05, 0.05, 0.05, PARTICLE_SPEED);
 
-                // Check for entities in path within FOV
                 List<Entity> nearbyEntities = getNearbyEntitiesInFOV(particleLocation, direction, 1.5, FOV_ANGLE);
                 for (Entity entity : nearbyEntities) {
                     if (entity != player && entity instanceof LivingEntity) {
                         LivingEntity livingEntity = (LivingEntity) entity;
                         livingEntity.damage(DAMAGE_AMOUNT, player);
-                        livingEntity.setFireTicks(60); // Set entity on fire for 3 seconds
+                        livingEntity.setFireTicks(60);
 
-                        // Explosion particle effect on hit
                         world.spawnParticle(Particle.FLAME, livingEntity.getLocation().add(0, 1, 0), 30, 0.5, 0.5, 0.5, 0.1);
                         world.spawnParticle(Particle.LAVA, livingEntity.getLocation().add(0, 1, 0), 10, 0.3, 0.3, 0.3, 0.1);
                         world.playSound(livingEntity.getLocation(), Sound.ENTITY_GENERIC_BURN, 0.8f, 1.2f);
@@ -129,43 +119,28 @@ public class BasicWand extends BaseItem {
                     }
                 }
 
-                distance += 0.5; // Increment distance for next step
+                distance += 0.5;
             }
         }.runTaskTimer(ModdedDungeons.instance, 0L, 1L);
 
-        // Show message to player
         player.sendMessage(Component.text("§6You cast a fire spell!"));
     }
 
-    /**
-     * Gets entities within a field of view from a location
-     * @param location Center location
-     * @param direction Direction vector
-     * @param radius Radius to check
-     * @param fovDegrees Field of view in degrees
-     * @return List of entities within FOV
-     */
     private List<Entity> getNearbyEntitiesInFOV(Location location, Vector direction, double radius, double fovDegrees) {
         List<Entity> result = new ArrayList<>();
 
-        // Get all entities within radius
         for (Entity entity : location.getWorld().getNearbyEntities(location, radius, radius, radius)) {
             if (entity instanceof LivingEntity && !(entity instanceof Player)) {
-                // Calculate if entity is within FOV
                 Vector toEntity = entity.getLocation().toVector().subtract(location.toVector());
 
                 if (toEntity.length() > 0) {
-                    // Normalize vectors
                     toEntity = toEntity.normalize();
                     Vector dirNorm = direction.clone().normalize();
 
-                    // Calculate angle between vectors
                     double dot = dirNorm.dot(toEntity);
                     double angleDegrees = Math.toDegrees(Math.acos(dot));
 
-                    // Check if entity is in FOV
                     if (angleDegrees <= fovDegrees / 2) {
-                        // Check if there's a clear line of sight (no blocks in between)
                         RayTraceResult rayTrace = location.getWorld().rayTraceBlocks(
                                 location,
                                 toEntity,
@@ -174,7 +149,6 @@ public class BasicWand extends BaseItem {
                                 true
                         );
 
-                        // Add entity if no blocks were hit
                         if (rayTrace == null || rayTrace.getHitEntity() == entity) {
                             result.add(entity);
                         }

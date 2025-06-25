@@ -4,3 +4,33 @@ mongodb:
   database: mydatabase
   username: myuser
   password: mypassword
+
+dungeon_settings:
+  predungeon:
+    portal1:
+      x: -2
+      y: 69
+      z: -17
+      mx: 3
+      my: 61
+      mz: -17
+    portal1_destination:
+      x: 0
+      y: 61
+      z: -45
+    location:
+      spawn:
+        x: 0
+        y: 65
+        z: 0
+levels:
+  level1:
+    world: dungeons
+    max_entities: 50
+    position:
+      x: -37
+      y: 56
+      z: -113
+      mx: 52
+      my: 70
+      mz: -31

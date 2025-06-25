@@ -2,6 +2,7 @@ package dev.insilicon.moddedDungeons.EntityManagement;
 
 import dev.insilicon.moddedDungeons.EntityManagement.CustomEntities.BaseEntity;
 import dev.insilicon.moddedDungeons.EntityManagement.CustomEntities.BaseEntityArmor;
+import dev.insilicon.moddedDungeons.EntityManagement.CustomEntities.Basic.BasicArcher;
 import dev.insilicon.moddedDungeons.EntityManagement.CustomEntities.Basic.BasicWarrior;
 import dev.insilicon.moddedDungeons.ItemManagement.ItemManager;
 import dev.insilicon.moddedDungeons.ItemManagement.Items.BaseArmor;
@@ -88,6 +89,7 @@ public class EntityManager implements Listener {
 
         // Basic Tier entities
         EntityTypes.add(new BasicWarrior());
+        EntityTypes.add(new BasicArcher());
 
         // Precompile armor entity types
         for (BaseEntity entity : EntityTypes) {
@@ -98,15 +100,31 @@ public class EntityManager implements Listener {
     }
 
     // Events
-    @EventHandler
+    @EventHandler(priority = org.bukkit.event.EventPriority.LOW)
     public void onEntitySpawn(EntitySpawnEvent event) {
         if (!(event.getEntity() instanceof LivingEntity)) return;
-        
         LivingEntity entity = (LivingEntity) event.getEntity();
         BaseEntity entityType = getEntityType(entity);
-        if (entityType == null) return;
-
-        entityType.entitySpawn(entity);
+        
+        // If the entity does not have the key, but matches a custom type by class, assign the key
+        if (entityType == null) {
+            // Try to match by entity type (e.g., for natural spawns)
+            for (BaseEntity type : EntityTypes) {
+                if (type.getBaseEntityType() == entity.getType()) {
+                    entity.getPersistentDataContainer().set(entityKey, org.bukkit.persistence.PersistentDataType.STRING, type.getName());
+                    entityType = type;
+                    break;
+                }
+            }
+        }
+        
+        // If we found a custom entity type, configure it
+        if (entityType != null) {
+            // Always ensure the key is set for custom entities
+            entity.getPersistentDataContainer().set(entityKey, org.bukkit.persistence.PersistentDataType.STRING, entityType.getName());
+            entityType.entitySpawn(entity);
+            ModdedDungeons.instance.getLogger().info("Custom entity configured: " + entityType.getName() + " at " + entity.getLocation());
+        }
     }
 
     @EventHandler
@@ -288,18 +306,19 @@ public class EntityManager implements Listener {
         LivingEntity entity = (LivingEntity) location.getWorld().spawnEntity(location, entityType.getBaseEntityType());
         if (entity == null) return null;
 
-        // Set entity properties
-        entity.setCustomName(entityType.getDisplayName());
-        entity.setCustomNameVisible(true);
-        entity.setMaxHealth(entityType.getMaxHealth());
-        entity.setHealth(entityType.getMaxHealth());
-
-        // Mark entity with persistent data
+        // IMMEDIATELY set the persistence key to avoid cancellation by DungeonManager
         entity.getPersistentDataContainer().set(entityKey, PersistentDataType.STRING, entityType.getName());
+
+        // Set entity properties
+        entity.customName(entityType.getDisplayName());
+        entity.setCustomNameVisible(true);
+        entity.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH).setBaseValue(entityType.getMaxHealth());
+        entity.setHealth(entityType.getMaxHealth());
 
         // Trigger spawn event
         entityType.entitySpawn(entity);
 
+        ModdedDungeons.instance.getLogger().info("Successfully spawned custom entity: " + entityType.getName() + " at " + location);
         return entity;
     }
 }

@@ -12,6 +12,7 @@ public class Level1Manager implements Listener {
     private int maxX = 52;
     private int maxY = 70;
     private int maxZ = -31;
+    private String worldName = "world";
 
     public Level1Manager() {
         loadCoordinatesFromConfig();
@@ -36,6 +37,7 @@ public class Level1Manager implements Listener {
             maxY = positionSection.getInt("my", maxY);
             maxZ = positionSection.getInt("mz", maxZ);
         }
+        worldName = ModdedDungeons.instance.getConfig().getString("levels.level1.world", "world");
     }
 
     private void setLevelCoordinatesInConfig() {
@@ -45,6 +47,7 @@ public class Level1Manager implements Listener {
         ModdedDungeons.instance.getConfig().set("levels.level1.position.mx", maxX);
         ModdedDungeons.instance.getConfig().set("levels.level1.position.my", maxY);
         ModdedDungeons.instance.getConfig().set("levels.level1.position.mz", maxZ);
+        ModdedDungeons.instance.getConfig().set("levels.level1.world", worldName);
         ModdedDungeons.instance.saveConfig();
     }
 }

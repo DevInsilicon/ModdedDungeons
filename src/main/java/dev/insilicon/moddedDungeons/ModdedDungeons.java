@@ -56,6 +56,10 @@ public final class ModdedDungeons extends JavaPlugin {
 
             registerCommand("itemgui", "Open the custom item GUI", "/itemgui", itemGUI);
 
+            // Register debuglog command
+            dev.insilicon.moddedDungeons.Interface.Admin.DebugLogCMD debugLogCMD = new dev.insilicon.moddedDungeons.Interface.Admin.DebugLogCMD();
+            registerCommand("debuglog", "Show recent debug log for entities and chests", "/debuglog", debugLogCMD);
+
         } catch (Exception e) {
             getLogger().severe("Failed to initialize plugin components: " + e.getMessage());
             e.printStackTrace();

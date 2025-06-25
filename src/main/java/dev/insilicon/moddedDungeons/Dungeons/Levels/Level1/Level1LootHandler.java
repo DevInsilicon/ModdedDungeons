@@ -24,6 +24,7 @@ public class Level1LootHandler implements Listener {
     private static final long COOLDOWN_TIME = 300000;
 
     private int minX, minY, minZ, maxX, maxY, maxZ;
+    private String worldName = "world";
 
     public Level1LootHandler() {
         loadLevelBoundaries();
@@ -48,6 +49,7 @@ public class Level1LootHandler implements Listener {
             maxY = 70;
             maxZ = -31;
         }
+        worldName = ModdedDungeons.instance.getConfig().getString("levels.level1.world", "world");
     }
 
     private void findAllContainers() {
@@ -55,10 +57,21 @@ public class Level1LootHandler implements Listener {
         lootBarrels.clear();
         trapChests.clear();
 
-        World world = ModdedDungeons.instance.getServer().getWorlds().get(0);
+        World world = ModdedDungeons.instance.getServer().getWorld(worldName);
 
         ModdedDungeons.instance.getLogger().info("Finding containers in Level 1...");
         ModdedDungeons.instance.getLogger().info("Scanning area from: " + minX + "," + minY + "," + minZ + " to " + maxX + "," + maxY + "," + maxZ);
+
+        // Force-load all chunks in the region before scanning
+        int chunkMinX = minX >> 4;
+        int chunkMaxX = maxX >> 4;
+        int chunkMinZ = minZ >> 4;
+        int chunkMaxZ = maxZ >> 4;
+        for (int cx = chunkMinX; cx <= chunkMaxX; cx++) {
+            for (int cz = chunkMinZ; cz <= chunkMaxZ; cz++) {
+                world.getChunkAt(cx, cz).load();
+            }
+        }
 
         int chestCount = 0;
         int barrelCount = 0;
